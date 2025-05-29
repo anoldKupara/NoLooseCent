@@ -32,40 +32,60 @@ namespace NoLooseCent.Controllers
             ViewBag.Currencies = _context.Currencies.ToList();
             return View();
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Income income)
         {
+            ModelState.Remove("Currency");
+
             if (ModelState.IsValid)
             {
                 _context.Add(income);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewBag.Currencies = _context.Currencies.ToList();
             return View(income);
         }
+
 
         public async Task<IActionResult> Edit(int id)
         {
             var income = await _context.Incomes.FindAsync(id);
             if (income == null) return NotFound();
+
             ViewBag.Currencies = _context.Currencies.ToList();
             return View(income);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Income income)
         {
-            if (id != income.Id) return NotFound();
+            if (id != income.Id)
+                return NotFound();
+
+            ModelState.Remove("Currency");
+
             if (ModelState.IsValid)
             {
-                _context.Update(income);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Update(income);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.Incomes.Any(e => e.Id == id))
+                        return NotFound();
+
+                    throw;
+                }
             }
+
             ViewBag.Currencies = _context.Currencies.ToList();
             return View(income);
         }

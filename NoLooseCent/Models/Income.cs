@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
 
 namespace NoLooseCent.Models
 {
@@ -18,6 +19,7 @@ namespace NoLooseCent.Models
         // Foreign Key
         [Required]
         public int CurrencyId { get; set; }
+        [BindNever]
         public Currency Currency { get; set; }
     }
 }
