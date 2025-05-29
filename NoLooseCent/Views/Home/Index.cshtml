@@ -5,16 +5,6 @@
 
 <h2 class="text-center mb-4">NoLooseCent Financial Dashboard</h2>
 
-<!-- Action Buttons -->
-<div class="d-flex justify-content-center mb-4">
-    <a asp-controller="Income" asp-action="Create" class="btn btn-success me-3">
-        <i class="fas fa-plus-circle"></i> Add Income
-    </a>
-    <a asp-controller="Expense" asp-action="Create" class="btn btn-danger">
-        <i class="fas fa-minus-circle"></i> Add Expense
-    </a>
-</div>
-
 <!-- USD Summary -->
 <h4 class="mb-3">USD Summary</h4>
 <div class="row text-center mb-4">
@@ -73,9 +63,15 @@
     </div>
 </div>
 
-<!-- Recent Transactions Table -->
-<hr class="mb-4" />
+<!-- Income vs Expense Pie Chart -->
+<h4 class="mt-5 mb-3">Income vs Expense Overview</h4>
+<div class="row justify-content-center mb-5">
+    <div class="col-md-6">
+        <canvas id="incomeExpenseChart" width="400" height="200"></canvas>
+    </div>
+</div>
 
+<!-- Recent Transactions Table -->
 <h4>Recent Transactions</h4>
 <table class="table table-striped">
     <thead>
@@ -102,3 +98,38 @@
         }
     </tbody>
 </table>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    window.onload = function () {
+        const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+
+        const income = parseFloat("@(Model.TotalUsdIncome + Model.TotalZwlIncome)");
+        const expense = parseFloat("@(Model.TotalUsdExpense + Model.TotalZwlExpense)");
+
+        const incomeExpenseChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Total Income', 'Total Expense'],
+                datasets: [{
+                    data: [income, expense],
+                    backgroundColor: ['#28a745', '#dc3545'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Combined Income vs Expense'
+                    }
+                }
+            }
+        });
+    };
+</script>
