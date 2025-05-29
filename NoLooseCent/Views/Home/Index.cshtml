@@ -1,8 +1,7 @@
-﻿@{
-    ViewData["Title"] = "NoLooseCent Dashboard";
-    decimal totalIncome = (decimal)ViewBag.TotalIncome;
-    decimal totalExpense = (decimal)ViewBag.TotalExpense;
-    decimal balance = (decimal)ViewBag.Balance;
+﻿@model NoLooseCent.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
 <h2 class="text-center mb-4">NoLooseCent Financial Dashboard</h2>
@@ -11,31 +10,54 @@
     <div class="col-md-4 mb-4">
         <div class="card text-white bg-success h-100 shadow">
             <div class="card-body">
-                <i class="fas fa-arrow-circle-down fa-3x mb-2"></i>
                 <h5 class="card-title">Total Income</h5>
-                <h3>@totalIncome.ToString("C")</h3>
-                <a asp-controller="Income" asp-action="Index" class="btn btn-light mt-2">View Incomes</a>
+                <h3>@Model.TotalIncome.ToString("C")</h3>
             </div>
         </div>
     </div>
     <div class="col-md-4 mb-4">
         <div class="card text-white bg-danger h-100 shadow">
             <div class="card-body">
-                <i class="fas fa-arrow-circle-up fa-3x mb-2"></i>
                 <h5 class="card-title">Total Expenses</h5>
-                <h3>@totalExpense.ToString("C")</h3>
-                <a asp-controller="Expense" asp-action="Index" class="btn btn-light mt-2">View Expenses</a>
+                <h3>@Model.TotalExpense.ToString("C")</h3>
             </div>
         </div>
     </div>
     <div class="col-md-4 mb-4">
         <div class="card text-white bg-info h-100 shadow">
             <div class="card-body">
-                <i class="fas fa-wallet fa-3x mb-2"></i>
                 <h5 class="card-title">Balance</h5>
-                <h3>@balance.ToString("C")</h3>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-light mt-2">Refresh</a>
+                <h3>@Model.Balance.ToString("C")</h3>
             </div>
         </div>
     </div>
 </div>
+
+<hr class="mb-4" />
+
+<h4>Recent Transactions</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Currency</th>
+            <th>Source / Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.RecentTransactions)
+        {
+            <tr>
+                <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <span class="badge @(item.Type == "Income" ? "bg-success" : "bg-danger")">@item.Type</span>
+                </td>
+                <td>@item.Amount.ToString("N2")</td>
+                <td>@item.CurrencyName</td>
+                <td>@item.SourceOrPurpose</td>
+            </tr>
+        }
+    </tbody>
+</table>

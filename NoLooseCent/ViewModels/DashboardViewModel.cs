@@ -2,9 +2,15 @@
 {
     public class DashboardViewModel
     {
-        public decimal TotalIncome { get; set; }
-        public decimal TotalExpense { get; set; }
-        public decimal Balance => TotalIncome - TotalExpense;
+        // USD
+        public decimal TotalUsdIncome { get; set; }
+        public decimal TotalUsdExpense { get; set; }
+        public decimal UsdBalance => TotalUsdIncome - TotalUsdExpense;
+
+        // ZWL
+        public decimal TotalZwlIncome { get; set; }
+        public decimal TotalZwlExpense { get; set; }
+        public decimal ZwlBalance => TotalZwlIncome - TotalZwlExpense;
 
         public List<RecentTransactionViewModel> RecentTransactions { get; set; }
     }
