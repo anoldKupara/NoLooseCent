@@ -1,8 +1,41 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "NoLooseCent Dashboard";
+    decimal totalIncome = (decimal)ViewBag.TotalIncome;
+    decimal totalExpense = (decimal)ViewBag.TotalExpense;
+    decimal balance = (decimal)ViewBag.Balance;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h2 class="text-center mb-4">NoLooseCent Financial Dashboard</h2>
+
+<div class="row text-center">
+    <div class="col-md-4 mb-4">
+        <div class="card text-white bg-success h-100 shadow">
+            <div class="card-body">
+                <i class="fas fa-arrow-circle-down fa-3x mb-2"></i>
+                <h5 class="card-title">Total Income</h5>
+                <h3>@totalIncome.ToString("C")</h3>
+                <a asp-controller="Income" asp-action="Index" class="btn btn-light mt-2">View Incomes</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-white bg-danger h-100 shadow">
+            <div class="card-body">
+                <i class="fas fa-arrow-circle-up fa-3x mb-2"></i>
+                <h5 class="card-title">Total Expenses</h5>
+                <h3>@totalExpense.ToString("C")</h3>
+                <a asp-controller="Expense" asp-action="Index" class="btn btn-light mt-2">View Expenses</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card text-white bg-info h-100 shadow">
+            <div class="card-body">
+                <i class="fas fa-wallet fa-3x mb-2"></i>
+                <h5 class="card-title">Balance</h5>
+                <h3>@balance.ToString("C")</h3>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-light mt-2">Refresh</a>
+            </div>
+        </div>
+    </div>
 </div>
