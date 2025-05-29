@@ -1,0 +1,38 @@
+﻿@model IEnumerable<NoLooseCent.Models.Income>
+@{
+    ViewData["Title"] = "Income List";
+}
+
+<h2>Income List</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add New Income</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Amount</th>
+            <th>Source</th>
+            <th>Date</th>
+            <th>Currency</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Amount</td>
+                <td>@item.Source</td>
+                <td>@item.DateReceived.ToShortDateString()</td>
+                <td>@item.Currency?.Name</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
