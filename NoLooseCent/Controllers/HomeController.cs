@@ -16,8 +16,32 @@ namespace NoLooseCent.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var totalIncome = await _context.Incomes.SumAsync(i => (decimal?)i.Amount) ?? 0;
-            var totalExpense = await _context.Expenses.SumAsync(e => (decimal?)e.Amount) ?? 0;
+            // Assume: Currency.Code is "USD-*" or "ZWL"
+            var usdCurrencyIds = await _context.Currencies
+                .Where(c => c.Code.StartsWith("USD"))
+                .Select(c => c.Id)
+                .ToListAsync();
+
+            var zwlCurrencyIds = await _context.Currencies
+                .Where(c => c.Code.StartsWith("ZWL"))
+                .Select(c => c.Id)
+                .ToListAsync();
+
+            var totalUsdIncome = await _context.Incomes
+                .Where(i => usdCurrencyIds.Contains(i.CurrencyId))
+                .SumAsync(i => (decimal?)i.Amount) ?? 0;
+
+            var totalUsdExpense = await _context.Expenses
+                .Where(e => usdCurrencyIds.Contains(e.CurrencyId))
+                .SumAsync(e => (decimal?)e.Amount) ?? 0;
+
+            var totalZwlIncome = await _context.Incomes
+                .Where(i => zwlCurrencyIds.Contains(i.CurrencyId))
+                .SumAsync(i => (decimal?)i.Amount) ?? 0;
+
+            var totalZwlExpense = await _context.Expenses
+                .Where(e => zwlCurrencyIds.Contains(e.CurrencyId))
+                .SumAsync(e => (decimal?)e.Amount) ?? 0;
 
             var recentIncomes = await _context.Incomes
                 .Include(i => i.Currency)
@@ -54,8 +78,10 @@ namespace NoLooseCent.Controllers
 
             var model = new DashboardViewModel
             {
-                TotalIncome = totalIncome,
-                TotalExpense = totalExpense,
+                TotalUsdIncome = totalUsdIncome,
+                TotalUsdExpense = totalUsdExpense,
+                TotalZwlIncome = totalZwlIncome,
+                TotalZwlExpense = totalZwlExpense,
                 RecentTransactions = allRecent
             };
 
