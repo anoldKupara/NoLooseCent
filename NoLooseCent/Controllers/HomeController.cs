@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NoLooseCent.DbContexts;
@@ -5,6 +6,7 @@ using NoLooseCent.ViewModels;
 
 namespace NoLooseCent.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
