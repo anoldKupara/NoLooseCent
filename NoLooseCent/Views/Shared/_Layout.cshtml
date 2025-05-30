@@ -24,12 +24,14 @@
                 width: 60px;
             }
 
-            .sidebar h4, .sidebar a span {
+            .sidebar h4,
+            .sidebar a span {
                 display: inline-block;
                 transition: opacity 0.2s ease;
             }
 
-            .sidebar.collapsed h4, .sidebar.collapsed a span {
+            .sidebar.collapsed h4,
+            .sidebar.collapsed a span {
                 opacity: 0;
             }
 
@@ -41,7 +43,8 @@
                 text-decoration: none;
             }
 
-                .sidebar a:hover, .sidebar a.active {
+                .sidebar a:hover,
+                .sidebar a.active {
                     background-color: #495057;
                     color: #fff;
                 }
@@ -82,6 +85,7 @@
         <a asp-controller="Income" asp-action="Index"><i class="fas fa-arrow-down me-2"></i> <span>Incomes</span></a>
         <a asp-controller="Expense" asp-action="Index"><i class="fas fa-arrow-up me-2"></i> <span>Expenses</span></a>
         <a asp-controller="Currency" asp-action="Index"><i class="fas fa-coins me-2"></i> <span>Currencies</span></a>
+        <a asp-controller="Reports" asp-action="Index"><i class="fas fa-chart-pie me-2"></i> <span>Reports</span></a>
     </div>
 
     <!-- Toggle Button -->

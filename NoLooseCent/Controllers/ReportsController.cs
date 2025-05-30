@@ -16,6 +16,8 @@ namespace NoLooseCent.Controllers
 
         public async Task<IActionResult> Index()
         {
+
+
             var usdCurrencyIds = await _context.Currencies
                 .Where(c => c.Code.StartsWith("USD"))
                 .Select(c => c.Id)

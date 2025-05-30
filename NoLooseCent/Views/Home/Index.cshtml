@@ -3,131 +3,190 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<h2 class="text-center mb-4">NoLooseCent Financial Dashboard</h2>
+<!-- Google Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-<!-- USD Summary -->
-<h4 class="mb-3">USD Summary</h4>
-<div class="row text-center mb-4">
-    <div class="col-md-4">
-        <div class="card text-white bg-success shadow">
-            <div class="card-body">
-                <h5>Total USD Income</h5>
-                <h3>@Model.TotalUsdIncome.ToString("C")</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-danger shadow">
-            <div class="card-body">
-                <h5>Total USD Expense</h5>
-                <h3>@Model.TotalUsdExpense.ToString("C")</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-info shadow">
-            <div class="card-body">
-                <h5>USD Balance</h5>
-                <h3>@Model.UsdBalance.ToString("C")</h3>
-            </div>
-        </div>
-    </div>
-</div>
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f5f5f9;
+    }
 
-<!-- ZWL Summary -->
-<h4 class="mb-3">ZWL Summary</h4>
-<div class="row text-center mb-4">
-    <div class="col-md-4">
-        <div class="card text-white bg-success shadow">
-            <div class="card-body">
-                <h5>Total ZWL Income</h5>
-                <h3>@Model.TotalZwlIncome.ToString("N2") ZWL</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-danger shadow">
-            <div class="card-body">
-                <h5>Total ZWL Expense</h5>
-                <h3>@Model.TotalZwlExpense.ToString("N2") ZWL</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-info shadow">
-            <div class="card-body">
-                <h5>ZWL Balance</h5>
-                <h3>@Model.ZwlBalance.ToString("N2") ZWL</h3>
-            </div>
-        </div>
-    </div>
-</div>
+    .card-custom {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(50, 50, 93, 0.05);
+        transition: 0.3s;
+    }
 
-<!-- Income vs Expense Pie Chart -->
-<h4 class="mt-5 mb-3">Income vs Expense Overview</h4>
-<div class="row justify-content-center mb-5">
-    <div class="col-md-6">
-        <canvas id="incomeExpenseChart" width="400" height="200"></canvas>
-    </div>
-</div>
-
-<!-- Recent Transactions Table -->
-<h4>Recent Transactions</h4>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Type</th>
-            <th>Amount</th>
-            <th>Currency</th>
-            <th>Source / Purpose</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.RecentTransactions)
-        {
-            <tr>
-                <td>@item.Date.ToString("yyyy-MM-dd")</td>
-                <td>
-                    <span class="badge @(item.Type == "Income" ? "bg-success" : "bg-danger")">@item.Type</span>
-                </td>
-                <td>@item.Amount.ToString("N2")</td>
-                <td>@item.CurrencyName</td>
-                <td>@item.SourceOrPurpose</td>
-            </tr>
+        .card-custom:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         }
-    </tbody>
-</table>
 
-<!-- Chart.js Script -->
+    .text-muted-sm {
+        font-size: 0.85rem;
+        color: #888;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container-fluid px-4">
+    <!-- Greeting Section -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card card-custom p-4 d-flex flex-row align-items-center justify-content-between bg-white">
+                <div>
+                    <h4 class="mb-1">Welcome Back 👋</h4>
+                    <p class="text-muted-sm">Here's your financial overview</p>
+                </div>
+                <i class="fas fa-coins fa-2x text-primary"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card card-custom bg-white p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted-sm">Total USD Income</small>
+                        <h4 class="mb-0">@Model.TotalUsdIncome.ToString("C")</h4>
+                    </div>
+                    <i class="fas fa-arrow-down fa-lg text-success"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-custom bg-white p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted-sm">Total USD Expense</small>
+                        <h4 class="mb-0">@Model.TotalUsdExpense.ToString("C")</h4>
+                    </div>
+                    <i class="fas fa-arrow-up fa-lg text-danger"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-custom bg-white p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted-sm">USD Balance</small>
+                        <h4 class="mb-0">@Model.UsdBalance.ToString("C")</h4>
+                    </div>
+                    <i class="fas fa-wallet fa-lg text-primary"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card card-custom bg-white p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted-sm">Total ZWL Income</small>
+                        <h4 class="mb-0">@Model.TotalZwlIncome.ToString("N2") ZWL</h4>
+                    </div>
+                    <i class="fas fa-arrow-down fa-lg text-success"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-custom bg-white p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted-sm">Total ZWL Expense</small>
+                        <h4 class="mb-0">@Model.TotalZwlExpense.ToString("N2") ZWL</h4>
+                    </div>
+                    <i class="fas fa-arrow-up fa-lg text-danger"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-custom bg-white p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted-sm">ZWL Balance</small>
+                        <h4 class="mb-0">@Model.ZwlBalance.ToString("N2") ZWL</h4>
+                    </div>
+                    <i class="fas fa-wallet fa-lg text-primary"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card card-custom p-4 bg-white">
+                <h5 class="section-title">Income vs Expense</h5>
+                <canvas id="incomeExpenseChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="card card-custom bg-white mb-5">
+        <div class="card-body">
+            <h5 class="section-title">Recent Transactions</h5>
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Currency</th>
+                        <th>Source / Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.RecentTransactions)
+                    {
+                        <tr>
+                            <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <span class="badge bg-@(item.Type == "Income" ? "success" : "danger")">@item.Type</span>
+                            </td>
+                            <td>@item.Amount.ToString("N2")</td>
+                            <td>@item.CurrencyName</td>
+                            <td>@item.SourceOrPurpose</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     window.onload = function () {
         const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
-
         const income = parseFloat("@(Model.TotalUsdIncome + Model.TotalZwlIncome)");
         const expense = parseFloat("@(Model.TotalUsdExpense + Model.TotalZwlExpense)");
 
-        const incomeExpenseChart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: ['Total Income', 'Total Expense'],
+                labels: ['Income', 'Expense'],
                 datasets: [{
                     data: [income, expense],
-                    backgroundColor: ['#28a745', '#dc3545'],
-                    borderWidth: 1
+                    backgroundColor: ['#00cfe8', '#ea5455']
                 }]
             },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Combined Income vs Expense'
-                    }
+                    legend: { position: 'bottom' }
                 }
             }
         });

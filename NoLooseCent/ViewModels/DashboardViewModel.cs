@@ -13,5 +13,7 @@
         public decimal ZwlBalance => TotalZwlIncome - TotalZwlExpense;
 
         public List<RecentTransactionViewModel> RecentTransactions { get; set; }
+        public Dictionary<string, decimal> MonthlyIncome { get; set; } = new();
+        public Dictionary<string, decimal> MonthlyExpense { get; set; } = new();
     }
 }
