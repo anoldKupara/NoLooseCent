@@ -1,7 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NoLooseCent.DbContexts;
+using NoLooseCent.Models;
 using NoLooseCent.ViewModels;
 
 namespace NoLooseCent.Controllers
@@ -10,15 +12,24 @@ namespace NoLooseCent.Controllers
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(ApplicationDbContext context)
+        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
-            // Assume: Currency.Code is "USD-*" or "ZWL"
+            // 👤 Get the current user
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                ViewBag.FullName = user?.FullName ?? "User";
+            }
+
+            // 💰 Currency grouping logic
             var usdCurrencyIds = await _context.Currencies
                 .Where(c => c.Code.StartsWith("USD"))
                 .Select(c => c.Id)
@@ -45,6 +56,7 @@ namespace NoLooseCent.Controllers
                 .Where(e => zwlCurrencyIds.Contains(e.CurrencyId))
                 .SumAsync(e => (decimal?)e.Amount) ?? 0;
 
+            // 🧾 Recent Transactions
             var recentIncomes = await _context.Incomes
                 .Include(i => i.Currency)
                 .OrderByDescending(i => i.DateReceived)
