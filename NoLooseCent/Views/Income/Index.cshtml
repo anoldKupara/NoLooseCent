@@ -3,36 +3,107 @@
     ViewData["Title"] = "Income List";
 }
 
-<h2>Income List</h2>
+<!-- Tailwind CSS -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+
+<h2 class="text-2xl font-bold mb-4">Income List</h2>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Add New Income</a>
+    <a asp-action="Create" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mb-4 inline-block">Add New Income</a>
 </p>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Amount</th>
-            <th>Source</th>
-            <th>Date</th>
-            <th>Currency</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="overflow-x-auto">
+    <table id="incomeTable" class="min-w-full table-auto border-collapse border border-gray-300">
+        <thead class="bg-gray-100">
             <tr>
-                <td>@item.Amount</td>
-                <td>@item.Source</td>
-                <td>@item.DateReceived.ToShortDateString()</td>
-                <td>@item.Currency?.Name</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                </td>
+                <th class="border p-2">Amount</th>
+                <th class="border p-2">Source</th>
+                <th class="border p-2">Date</th>
+                <th class="border p-2">Currency</th>
+                <th class="border p-2">Actions</th>
             </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="hover:bg-gray-50">
+                    <td class="border p-2">@item.Amount</td>
+                    <td class="border p-2">@item.Source</td>
+                    <td class="border p-2">@item.DateReceived.ToShortDateString()</td>
+                    <td class="border p-2">@item.Currency?.Name</td>
+                    <td class="border p-2 space-x-1">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded text-sm">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-sm">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!-- Custom Pagination Styling -->
+<style>
+    .dataTables_wrapper .dataTables_paginate {
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            margin: 0 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
-    </tbody>
-</table>
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+                background-color: #e5e7eb;
+                color: #1f2937;
+            }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background-color: #6366f1;
+                color: white !important;
+                font-weight: 600;
+                box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+            }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+                background-color: #e5e7eb;
+                color: #9ca3af !important;
+                cursor: not-allowed;
+            }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $('#incomeTable').DataTable({
+            paging: true,
+            searching: true,
+            order: [[2, "desc"]],
+            language: {
+                paginate: {
+                    previous: "«",
+                    next: "»"
+                }
+            }
+        });
+    });
+</script>
