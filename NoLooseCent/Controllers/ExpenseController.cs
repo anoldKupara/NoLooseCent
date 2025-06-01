@@ -17,8 +17,12 @@ namespace NoLooseCent.Controllers
         // GET: Expense
         public async Task<IActionResult> Index()
         {
-            var expenses = _context.Expenses.Include(e => e.Currency);
-            return View(await expenses.ToListAsync());
+            var expenses = await _context.Expenses
+                .Include(e => e.Currency)
+                .OrderByDescending(e => e.DateSpent)
+                .ToListAsync();
+
+            return View(expenses);
         }
 
         // GET: Expense/Details/5
@@ -41,7 +45,6 @@ namespace NoLooseCent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Expense expense)
         {
-            // Prevent model binding validation error on navigation property
             ModelState.Remove("Currency");
 
             if (ModelState.IsValid)
@@ -54,7 +57,6 @@ namespace NoLooseCent.Controllers
             ViewBag.Currencies = _context.Currencies.ToList();
             return View(expense);
         }
-
 
         // GET: Expense/Edit/5
         public async Task<IActionResult> Edit(int id)
@@ -71,10 +73,8 @@ namespace NoLooseCent.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Expense expense)
         {
-            if (id != expense.Id)
-                return NotFound();
+            if (id != expense.Id) return NotFound();
 
-            // Fix navigation property validation
             ModelState.Remove("Currency");
 
             if (ModelState.IsValid)
@@ -89,7 +89,6 @@ namespace NoLooseCent.Controllers
                 {
                     if (!_context.Expenses.Any(e => e.Id == id))
                         return NotFound();
-
                     throw;
                 }
             }
@@ -97,7 +96,6 @@ namespace NoLooseCent.Controllers
             ViewBag.Currencies = _context.Currencies.ToList();
             return View(expense);
         }
-
 
         // GET: Expense/Delete/5
         public async Task<IActionResult> Delete(int id)
