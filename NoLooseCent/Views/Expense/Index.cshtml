@@ -6,104 +6,160 @@
 <!-- Tailwind CSS -->
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
-<!-- DataTables CSS -->
+<!-- DataTables + Buttons + Responsive -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" />
 
-<h2 class="text-2xl font-bold mb-4">Expense List</h2>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">💸 Expense Overview</h2>
+        <a asp-action="Create"
+           class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition">
+            + New Expense
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mb-4 inline-block">Add New Expense</a>
-</p>
+    @if (!Model.Any())
+    {
+        <div class="text-center py-10 text-gray-500">
+            <p class="text-xl font-medium">No expense records found.</p>
+            <p class="mt-2 text-sm">Click the "Add New Expense" button to get started.</p>
+        </div>
+    }
+    else
+    {
+        <div class="flex flex-wrap gap-4 mb-6">
+            <input type="text" id="expenseSearch" placeholder="Search expenses..."
+                   class="flex-1 min-w-[250px] px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-200 focus:outline-none" />
 
-<div class="overflow-x-auto">
-    <table id="expenseTable" class="min-w-full table-auto border-collapse border border-gray-300">
-        <thead class="bg-gray-100">
-            <tr>
-                <th class="border p-2">Amount</th>
-                <th class="border p-2">Purpose</th>
-                <th class="border p-2">Date</th>
-                <th class="border p-2">Currency</th>
-                <th class="border p-2">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr class="hover:bg-gray-50">
-                    <td class="border p-2">@item.Amount</td>
-                    <td class="border p-2">@item.Purpose</td>
-                    <td class="border p-2">@item.DateSpent.ToShortDateString()</td>
-                    <td class="border p-2">@item.Currency?.Name</td>
-                    <td class="border p-2 space-x-1">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded text-sm">Edit</a>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-sm">Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            <select id="currencyExpenseFilter"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-200 focus:outline-none">
+                <option value="">All Currencies</option>
+                @foreach (var currency in Model.Select(i => i.Currency?.Name).Distinct())
+                {
+                    <option value="@currency">@currency</option>
+                }
+            </select>
+        </div>
+
+        <div class="overflow-hidden border border-gray-200 rounded-lg shadow-sm bg-white">
+            <table id="expenseTable" class="stripe hover min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-50 text-gray-600 font-semibold uppercase tracking-wide sticky top-0 z-10">
+                    <tr>
+                        <th class="px-6 py-3 text-left">Amount</th>
+                        <th class="px-6 py-3 text-left">Purpose</th>
+                        <th class="px-6 py-3 text-left">Date</th>
+                        <th class="px-6 py-3 text-left">Currency</th>
+                        <th class="px-6 py-3 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-gray-800">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="hover:bg-gray-50 transition-transform duration-200">
+                            <td class="px-6 py-3 font-medium relative group">
+                                @item.Amount
+                                <div class="absolute z-10 hidden group-hover:block bg-white border p-2 text-xs rounded shadow-md mt-1">
+                                    Purpose: @item.Purpose <br />
+                                    Date: @item.DateSpent.ToShortDateString()
+                                </div>
+                            </td>
+                            <td class="px-6 py-3">@item.Purpose</td>
+                            <td class="px-6 py-3">@item.DateSpent.ToShortDateString()</td>
+                            <td class="px-6 py-3">@item.Currency?.Name</td>
+                            <td class="px-6 py-3 space-x-3">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="text-indigo-600 hover:text-indigo-800 font-medium transition">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="text-blue-600 hover:text-blue-800 font-medium transition">Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-600 hover:text-red-800 font-medium transition">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 </div>
 
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
-<!-- Final Tailwind-style Pagination -->
-<style>
-    .dataTables_wrapper .dataTables_paginate {
-        margin-top: 1.5rem;
-        text-align: center;
-    }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            margin: 0 0.25rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            background-color: #f3f4f6;
-            border-radius: 0.5rem;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-            .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-                background-color: #e5e7eb;
-                color: #1f2937;
-            }
-
-            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-                background-color: #6366f1;
-                color: white !important;
-                font-weight: 600;
-                box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
-            }
-
-            .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
-                background-color: #e5e7eb;
-                color: #9ca3af !important;
-                cursor: not-allowed;
-            }
-</style>
-
+<!-- DataTable Config -->
 <script>
+    let expenseDataTable;
+
     $(document).ready(function () {
-        $('#expenseTable').DataTable({
-            paging: true,
-            searching: true,
-            order: [[2, "desc"]],
+        expenseDataTable = $('#expenseTable').DataTable({
+            responsive: true,
+            dom: 'Bfrtip',
+            buttons: [
+                { extend: 'excelHtml5', className: 'buttons-excel' },
+                { extend: 'pdfHtml5', className: 'buttons-pdf' },
+                { extend: 'print', className: 'buttons-print' }
+            ],
             language: {
                 paginate: {
                     previous: "«",
                     next: "»"
                 }
-            }
+            },
+            order: [[2, "desc"]],
+        });
+
+        // Search filter
+        $('#expenseSearch').on('keyup', function () {
+            expenseDataTable.search(this.value).draw();
+        });
+
+        // Currency filter
+        $('#currencyExpenseFilter').on('change', function () {
+            expenseDataTable.column(3).search(this.value).draw();
         });
     });
 </script>
+
+<!-- Button Styling -->
+<style>
+    .dt-button {
+        padding: 0.5rem 1rem;
+        margin: 0 0.25rem 0.5rem 0;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: white;
+        border-radius: 0.375rem;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.2s ease;
+    }
+
+    .buttons-excel {
+        background-color: #10b981 !important;
+    }
+
+    .buttons-pdf {
+        background-color: #ef4444 !important;
+    }
+
+    .buttons-print {
+        background-color: #6b7280 !important;
+    }
+
+    .dt-button:hover {
+        filter: brightness(0.9);
+    }
+
+    div.dt-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+</style>
