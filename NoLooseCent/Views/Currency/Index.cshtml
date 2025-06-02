@@ -3,32 +3,63 @@
     ViewData["Title"] = "Currency List";
 }
 
-<h2>Currency List</h2>
+<!-- Tailwind CSS -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Add New Currency</a>
-</p>
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Code</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var currency in Model)
-        {
-            <tr>
-                <td>@currency.Name</td>
-                <td>@currency.Code</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@currency.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="Details" asp-route-id="@currency.Id" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@currency.Id" class="btn btn-sm btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">🌍 Currency List</h2>
+        <a asp-action="Create" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-sm text-sm font-medium">
+            + Add New Currency
+        </a>
+    </div>
+
+    <div class="overflow-hidden border border-gray-200 rounded-lg shadow-sm bg-white">
+        <table id="currencyTable" class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50 text-gray-600 font-semibold uppercase tracking-wide">
+                <tr>
+                    <th class="px-6 py-3 text-left">Name</th>
+                    <th class="px-6 py-3 text-left">Code</th>
+                    <th class="px-6 py-3 text-left">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-gray-800">
+                @foreach (var currency in Model)
+                {
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-3">@currency.Name</td>
+                        <td class="px-6 py-3">@currency.Code</td>
+                        <td class="px-6 py-3 space-x-2">
+                            <a asp-action="Edit" asp-route-id="@currency.Id" class="text-yellow-600 hover:text-yellow-800 font-medium transition">Edit</a>
+                            <a asp-action="Details" asp-route-id="@currency.Id" class="text-blue-600 hover:text-blue-800 font-medium transition">Details</a>
+                            <a asp-action="Delete" asp-route-id="@currency.Id" class="text-red-600 hover:text-red-800 font-medium transition">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#currencyTable').DataTable({
+            paging: true,
+            searching: true,
+            order: [[0, 'asc']],
+            language: {
+                paginate: {
+                    previous: "«",
+                    next: "»"
+                }
+            }
+        });
+    });
+</script>updated
