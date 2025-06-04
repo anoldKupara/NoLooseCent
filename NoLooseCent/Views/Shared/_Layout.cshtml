@@ -109,6 +109,9 @@
             <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Expense" ? "active" : "")" asp-controller="Expense" asp-action="Index">
                 <i class="fas fa-money-bill-wave"></i><span>Expenses</span>
             </a>
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Currency" ? "active" : "")" asp-controller="Currency" asp-action="Index">
+                <i class="fas fa-dollar-sign"></i><span>Currency</span>
+            </a>
             <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")" asp-controller="Reports" asp-action="Index">
                 <i class="fas fa-chart-pie"></i><span>Reports</span>
             </a>

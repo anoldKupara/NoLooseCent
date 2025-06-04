@@ -123,12 +123,18 @@
         </div>
     </div>
 
-    <!-- Chart Section -->
+    <!-- Chart Section: Two Pie Charts -->
     <div class="row mb-5">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="card card-custom p-4 bg-white">
-                <h5 class="section-title">Income vs Expense</h5>
-                <canvas id="incomeExpenseChart" style="max-height: 300px;"></canvas>
+                <h5 class="section-title">USD Income vs Expense</h5>
+                <canvas id="usdChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card card-custom p-4 bg-white">
+                <h5 class="section-title">ZWL Income vs Expense</h5>
+                <canvas id="zwlChart" style="max-height: 300px;"></canvas>
             </div>
         </div>
     </div>
@@ -166,29 +172,82 @@
     </div>
 </div>
 
-<!-- Chart.js -->
+<!-- Chart.js and Plugin -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
 <script>
     window.onload = function () {
-        const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
-        const income = parseFloat("@(Model.TotalUsdIncome + Model.TotalZwlIncome)");
-        const expense = parseFloat("@(Model.TotalUsdExpense + Model.TotalZwlExpense)");
+        Chart.register(ChartDataLabels);
 
-        new Chart(ctx, {
+        const usdCtx = document.getElementById('usdChart').getContext('2d');
+        const zwlCtx = document.getElementById('zwlChart').getContext('2d');
+
+        const usdIncome = parseFloat("@Model.TotalUsdIncome");
+        const usdExpense = parseFloat("@Model.TotalUsdExpense");
+        const zwlIncome = parseFloat("@Model.TotalZwlIncome");
+        const zwlExpense = parseFloat("@Model.TotalZwlExpense");
+
+        new Chart(usdCtx, {
             type: 'pie',
             data: {
                 labels: ['Income', 'Expense'],
                 datasets: [{
-                    data: [income, expense],
+                    data: [usdIncome, usdExpense],
                     backgroundColor: ['#00cfe8', '#ea5455']
                 }]
             },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: { position: 'bottom' }
+                    legend: { position: 'bottom' },
+                    datalabels: {
+                        formatter: (value, context) => {
+                            const data = context.chart.data.datasets[0].data;
+                            const total = data.reduce((a, b) => a + b, 0);
+                            const percentage = (value / total * 100).toFixed(1) + '%';
+                            return percentage;
+                        },
+                        color: '#fff',
+                        font: {
+                            weight: 'bold',
+                            size: 14
+                        }
+                    }
                 }
-            }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        new Chart(zwlCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Income', 'Expense'],
+                datasets: [{
+                    data: [zwlIncome, zwlExpense],
+                    backgroundColor: ['#00cfe8', '#ea5455']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    datalabels: {
+                        formatter: (value, context) => {
+                            const data = context.chart.data.datasets[0].data;
+                            const total = data.reduce((a, b) => a + b, 0);
+                            const percentage = (value / total * 100).toFixed(1) + '%';
+                            return percentage;
+                        },
+                        color: '#fff',
+                        font: {
+                            weight: 'bold',
+                            size: 14
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
         });
     };
 </script>
