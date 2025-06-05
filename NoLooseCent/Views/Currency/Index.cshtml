@@ -9,15 +9,10 @@
 <!-- Tailwind CSS -->
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
-<!-- DataTables + Buttons + Responsive -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" />
-
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gradient-to-br from-gray-50 to-indigo-50 min-h-screen font-inter transition-colors duration-300">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gradient-to-br from-gray-50 to-indigo-50 min-h-screen font-inter">
     <div class="flex items-center justify-between mb-10">
         <h2 class="text-4xl font-extrabold text-gray-900 flex items-center tracking-tight">
             <i class="fas fa-coins text-indigo-500 mr-3"></i> Currency Dashboard
@@ -32,238 +27,169 @@
     {
         <div class="text-center py-16 bg-white bg-opacity-80 backdrop-blur-md rounded-2xl shadow-lg border border-gray-100">
             <p class="text-2xl font-semibold text-gray-800">No currencies yet.</p>
-            <p class="mt-3 text-sm text-gray-500">Start adding by clicking "Add Currency" above.</p>
+            <p class="mt-3 text-sm text-gray-500">Start adding currencies by clicking "Add Currency" above.</p>
         </div>
     }
     else
     {
-        <div class="flex flex-wrap gap-4 mb-10">
+        <div class="flex flex-wrap justify-between items-center gap-4 mb-10">
             <input type="text" id="currencySearch" placeholder="Search currencies..."
                    class="flex-1 min-w-[250px] px-5 py-3 border border-gray-200 rounded-xl shadow-sm bg-white bg-opacity-80 backdrop-blur-md focus:ring-2 focus:ring-indigo-400 focus:border-indigo-500 focus:outline-none transition-all duration-300 text-gray-800 placeholder-gray-400" />
+            <button id="exportButton" onclick="exportToCSV('currencies', 'Currencies')"
+                    class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:brightness-110 transition-all duration-300">
+                <i class="fas fa-file-csv mr-2"></i> Export CSV
+            </button>
         </div>
 
-        <div class="overflow-hidden border border-gray-100 rounded-2xl shadow-xl bg-white bg-opacity-90 backdrop-blur-md">
-            <table id="currencyTable" class="stripe hover min-w-full text-sm">
-                <thead class="bg-gradient-to-r from-indigo-50 to-purple-50 text-gray-700 font-semibold uppercase tracking-wider sticky top-0 z-10 shadow-sm">
-                    <tr>
-                        <th class="px-6 py-4 text-left">Name</th>
-                        <th class="px-6 py-4 text-left">Code</th>
-                        <th class="px-6 py-4 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 text-gray-800">
-                    @foreach (var currency in Model)
-                    {
-                        <tr class="hover:bg-indigo-50 transition-all duration-300 transform hover:scale-[1.01] bg-white bg-opacity-95 rounded-lg shadow-sm">
-                            <td class="px-6 py-4 font-medium relative group">
-                                <span class="text-indigo-600 font-semibold">@currency.Name</span>
-                                <div class="absolute z-30 hidden group-hover:block bg-gray-900 bg-opacity-90 backdrop-blur-sm text-white p-4 text-xs rounded-lg shadow-xl mt-2 transform -translate-x-1/2 left-1/2 transition-all duration-200 scale-0 group-hover:scale-100">
-                                    Name: @currency.Name <br />
-                                    Code: @currency.Code
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">@currency.Code</td>
-                            <td class="px-6 py-4 space-x-4">
-                                <a asp-action="Edit" asp-route-id="@currency.Id" class="text-indigo-600 hover:text-indigo-800 font-medium transition-all duration-200 hover:underline">
-                                    <i class="fas fa-edit mr-1"></i> Edit
-                                </a>
-                                <a asp-action="Details" asp-route-id="@currency.Id" class="text-blue-600 hover:text-blue-800 font-medium transition-all duration-200 hover:underline">
-                                    <i class="fas fa-info-circle mr-1"></i> Details
-                                </a>
-                                <a asp-action="Delete" asp-route-id="@currency.Id" class="text-red-600 hover:text-red-800 font-medium transition-all duration-200 hover:underline">
-                                    <i class="fas fa-trash mr-1"></i> Delete
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="bg-white bg-opacity-90 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden">
+            <div class="grid grid-cols-4 gap-4 px-6 py-4 text-gray-700 font-semibold uppercase tracking-wider text-xs bg-gradient-to-r from-indigo-50 to-purple-50 sticky top-0 z-10">
+                <div>ID</div>
+                <div>Name</div>
+                <div>Code</div>
+                <div>Actions</div>
+            </div>
+            <div id="currencyList" class="divide-y divide-gray-100">
+                @foreach (var item in Model)
+                {
+                    <div class="grid grid-cols-4 gap-4 px-6 py-4 relative group transition-all duration-300 hover:bg-indigo-50/30 hover:shadow-inner">
+                        <div class="text-gray-800">@item.Id</div>
+                        <div class="font-medium text-indigo-600 relative">
+                            @item.Name
+                            <div class="absolute z-30 hidden group-hover:block bg-gradient-to-r from-gray-800 to-gray-900 text-white p-3 text-xs rounded-lg shadow-xl -top-12 left-1/2 transform -translate-x-1/2 transition-all duration-300 opacity-0 group-hover:opacity-100">
+                                Code: @item.Code
+                                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 w-3 h-3 bg-gray-900 rotate-45"></div>
+                            </div>
+                        </div>
+                        <div class="text-gray-800">@item.Code</div>
+                        <div class="flex space-x-3">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-indigo-600 hover:text-indigo-800 transition-all duration-200 transform hover:scale-110">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="text-blue-600 hover:text-blue-800 transition-all duration-200 transform hover:scale-110">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-600 hover:text-red-800 transition-all duration-200 transform hover:scale-110">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     }
 </div>
 
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
-<!-- DataTable Config -->
+<!-- Custom JavaScript -->
 <script>
-    $(document).ready(function () {
-        $('#currencyTable').DataTable({
-            responsive: true,
-            dom: '<"flex flex-wrap justify-between items-center mb-6"Bfr>t<"flex justify-between items-center mt-6"ip>',
-            buttons: [
-                {
-                    extend: 'collection',
-                    text: '<i class="fas fa-download mr-2"></i> Export Data',
-                    className: 'dt-button buttons-collection bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300',
-                    buttons: [
-                        { extend: 'excelHtml5', text: '<i class="fas fa-file-excel mr-2"></i> Export to Excel', className: 'buttons-excel' },
-                        { extend: 'pdfHtml5', text: '<i class="fas fa-file-pdf mr-2"></i> Export to PDF', className: 'buttons-pdf' },
-                        { extend: 'print', text: '<i class="fas fa-print mr-2"></i> Print', className: 'buttons-print' }
-                    ]
-                }
-            ],
-            language: {
-                paginate: {
-                    previous: '<i class="fas fa-chevron-left"></i>',
-                    next: '<i class="fas fa-chevron-right"></i>'
-                },
-                processing: '<div class="animate-pulse bg-white bg-opacity-80 backdrop-blur-md rounded-lg p-4 text-gray-600">Loading currencies...</div>',
-                search: '',
-                searchPlaceholder: 'Search currencies...'
-            },
-            order: [[0, "asc"]],
-            drawCallback: function () {
-                // Re-apply hover effects after DataTable redraw
-                $('tr').hover(function () {
-                    $(this).addClass('hover:bg-indigo-50 transform scale-[1.01] transition-all duration-300');
-                }, function () {
-                    $(this).removeClass('hover:bg-indigo-50 transform scale-[1.01] transition-all duration-300');
-                });
-            }
-        });
+    let currencies = @Html.Raw(Json.Serialize(Model.Select(c => new { c.Id, c.Name, c.Code })));
 
-        // Search filter
-        $('#currencySearch').on('keyup', function () {
-            $('#currencyTable').DataTable().search(this.value).draw();
-        });
+    // Search functionality
+    $('#currencySearch').on('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+        const filtered = currencies.filter(item =>
+            item.Id.toString().toLowerCase().includes(searchTerm) ||
+            item.Name.toLowerCase().includes(searchTerm) ||
+            item.Code.toLowerCase().includes(searchTerm)
+        );
+        renderTable(filtered);
     });
+
+    // Render table
+    function renderTable(data) {
+        const container = $('#currencyList');
+        container.empty();
+        data.forEach(item => {
+            container.append(`
+                <div class="grid grid-cols-4 gap-4 px-6 py-4 relative group transition-all duration-300 hover:bg-indigo-50/30 hover:shadow-inner">
+                    <div class="text-gray-800">${item.Id}</div>
+                    <div class="font-medium text-indigo-600 relative">
+                        ${item.Name}
+                        <div class="absolute z-30 hidden group-hover:block bg-gradient-to-r from-gray-800 to-gray-900 text-white p-3 text-xs rounded-lg shadow-xl -top-12 left-1/2 transform -translate-x-1/2 transition-all duration-300 opacity-0 group-hover:opacity-100">
+                            Code: ${item.Code}
+                            <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 w-3 h-3 bg-gray-900 rotate-45"></div>
+                        </div>
+                    </div>
+                    <div class="text-gray-800">${item.Code}</div>
+                    <div class="flex space-x-3">
+                        <a href="/Currencies/Edit/${item.Id}" class="text-indigo-600 hover:text-indigo-800 transition-all duration-200 transform hover:scale-110">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="/Currencies/Details/${item.Id}" class="text-blue-600 hover:text-blue-800 transition-all duration-200 transform hover:scale-110">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                        <a href="/Currencies/Delete/${item.Id}" class="text-red-600 hover:text-red-800 transition-all duration-200 transform hover:scale-110">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            `);
+        });
+    }
+
+    // Export to CSV
+    function exportToCSV(type, filename) {
+        const headers = ['ID,Name,Code'];
+        const rows = currencies.map(item => `${item.Id},"${item.Name}",${item.Code}`);
+        const csv = headers.concat(rows).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `${filename}.csv`);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
 </script>
 
 <!-- Custom Styling -->
 <style>
-    /* Font and base styles */
     body {
         font-family: 'Inter', sans-serif;
     }
 
-    /* Table styling */
-    #currencyTable {
-        border-collapse: separate;
-        border-spacing: 0 0.5rem;
+    /* Table container */
+    #currencyList {
+        max-height: 70vh;
+        overflow-y: auto;
     }
 
-    #currencyTable th, #currencyTable td {
-        border-bottom: none;
-    }
-
-    #currencyTable tr {
+    /* Table rows */
+    #currencyList > div {
         transition: all 0.3s ease;
-        border-radius: 0.5rem;
     }
 
-    /* Export button styling */
-    .dt-button {
+    /* Hover effect with neumorphism */
+    #currencyList > div:hover {
+        background: rgba(224, 231, 255, 0.3);
+        box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.05), inset -2px -2px 5px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Tooltip arrow */
+    #currencyList .group-hover\:block {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    /* Export button */
+    #exportButton {
         padding: 0.75rem 1.5rem;
         font-size: 0.875rem;
         font-weight: 600;
-        color: white;
         border-radius: 0.75rem;
         border: none;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
     }
 
-    .buttons-collection {
-        background: linear-gradient(135deg, #6366f1, #4f46e5);
-    }
-
-    .buttons-excel {
-        background: linear-gradient(135deg, #10b981, #059669);
-    }
-
-    .buttons-pdf {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-    }
-
-    .buttons-print {
-        background: linear-gradient(135deg, #6b7280, #4b5563);
-    }
-
-    .dt-button:hover {
+    #exportButton:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        filter: brightness(1.1);
     }
 
-    .dt-button:active {
+    #exportButton:active {
         transform: translateY(0);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    div.dt-buttons {
-        position: relative;
-    }
-
-    .buttons-collection + .dt-button-collection {
-        background: #ffffff;
-        border-radius: 0.75rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        padding: 0.5rem;
-        margin-top: 0.5rem;
-        min-width: 180px;
-    }
-
-    .dt-button-collection .dt-button {
-        display: block;
-        width: 100%;
-        text-align: left;
-        margin: 0.25rem 0;
-        padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-    }
-
-    /* Pagination styling */
-    .dataTables_paginate .paginate_button {
-        padding: 0.5rem 1rem;
-        margin: 0 0.25rem;
-        border-radius: 0.5rem;
-        background: linear-gradient(135deg, #e5e7eb, #d1d5db);
-        color: #374151;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    .dataTables_paginate .paginate_button.current,
-    .dataTables_paginate .paginate_button:hover {
-        background: linear-gradient(135deg, #6366f1, #4f46e5);
-        color: white;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .dataTables_paginate .paginate_button.disabled {
-        background: #e5e7eb;
-        color: #9ca3af;
-        cursor: not-allowed;
-    }
-
-    /* Loading state */
-    .dataTables_wrapper .dataTables_processing {
-        background: #ffffff80;
-        backdrop-filter: blur(8px);
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        font-size: 1rem;
-        color: #4b5563;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Hide DataTables default search label */
-    .dataTables_filter label::before {
-        content: none !important;
-    }
-
-    .dataTables_filter input {
-        display: none !important; /* Hide default input, rely on custom #currencySearch */
     }
 </style>
