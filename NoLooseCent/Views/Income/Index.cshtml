@@ -1,23 +1,21 @@
 ﻿@model IEnumerable<NoLooseCent.Models.Income>
 @{
     ViewData["Title"] = "Income List";
-    // Calculate summary data
     var totalIncomeUSD = Model.Where(i => i.Currency != null && !i.Currency.Code.Contains("ZWL")).Sum(i => i.Amount);
     var totalIncomeZWL = Model.Where(i => i.Currency != null && i.Currency.Code.Contains("ZWL")).Sum(i => i.Amount);
 }
 
-<!-- Google Fonts for premium typography -->
+<!-- Google Fonts -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
 
 <!-- Tailwind CSS -->
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
-<!-- DataTables + Buttons + Responsive -->
+<!-- DataTables -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" />
 
-<!-- Font Awesome for icons -->
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gradient-to-br from-gray-50 to-indigo-50 min-h-screen font-inter transition-colors duration-300">
@@ -104,13 +102,7 @@
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
 <!-- DataTable Config -->
 <script>
@@ -119,19 +111,7 @@
     $(document).ready(function () {
         dataTable = $('#incomeTable').DataTable({
             responsive: true,
-            dom: '<"flex flex-wrap justify-between items-center mb-6"Bfr>t<"flex justify-between items-center mt-6"ip>',
-            buttons: [
-                {
-                    extend: 'collection',
-                    text: '<i class="fas fa-download mr-2"></i> Export Data',
-                    className: 'dt-button buttons-collection bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300',
-                    buttons: [
-                        { extend: 'excelHtml5', text: '<i class="fas fa-file-excel mr-2"></i> Export to Excel', className: 'buttons-excel' },
-                        { extend: 'pdfHtml5', text: '<i class="fas fa-file-pdf mr-2"></i> Export to PDF', className: 'buttons-pdf' },
-                        { extend: 'print', text: '<i class="fas fa-print mr-2"></i> Print', className: 'buttons-print' }
-                    ]
-                }
-            ],
+            dom: '<"flex flex-wrap justify-between items-center mb-6"fr>t<"flex justify-between items-center mt-6"ip>',
             language: {
                 paginate: {
                     previous: '<i class="fas fa-chevron-left"></i>',
@@ -143,7 +123,6 @@
             },
             order: [[2, "desc"]],
             drawCallback: function () {
-                // Re-apply hover effects after DataTable redraw
                 $('tr').hover(function () {
                     $(this).addClass('hover:bg-indigo-50 transform scale-[1.01] transition-all duration-300');
                 }, function () {
@@ -152,7 +131,6 @@
             }
         });
 
-        // Search filter
         $('#tableSearch').on('keyup', function () {
             dataTable.search(this.value).draw();
         });
@@ -161,12 +139,10 @@
 
 <!-- Custom Styling -->
 <style>
-    /* Font and base styles */
     body {
         font-family: 'Inter', sans-serif;
     }
 
-    /* Table styling */
     #incomeTable {
         border-collapse: separate;
         border-spacing: 0 0.5rem;
@@ -181,70 +157,6 @@
         border-radius: 0.5rem;
     }
 
-    /* Export button styling */
-    .dt-button {
-        padding: 0.75rem 1.5rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: white;
-        border-radius: 0.75rem;
-        border: none;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-    }
-
-    .buttons-collection {
-        background: linear-gradient(135deg, #6366f1, #4f46e5);
-    }
-
-    .buttons-excel {
-        background: linear-gradient(135deg, #10b981, #059669);
-    }
-
-    .buttons-pdf {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-    }
-
-    .buttons-print {
-        background: linear-gradient(135deg, #6b7280, #4b5563);
-    }
-
-    .dt-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        filter: brightness(1.1);
-    }
-
-    .dt-button:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    div.dt-buttons {
-        position: relative;
-    }
-
-    .buttons-collection + .dt-button-collection {
-        background: #ffffff;
-        border-radius: 0.75rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        padding: 0.5rem;
-        margin-top: 0.5rem;
-        min-width: 180px;
-    }
-
-    .dt-button-collection .dt-button {
-        display: block;
-        width: 100%;
-        text-align: left;
-        margin: 0.25rem 0;
-        padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-    }
-
-    /* Pagination styling */
     .dataTables_paginate .paginate_button {
         padding: 0.5rem 1rem;
         margin: 0 0.25rem;
@@ -268,7 +180,6 @@
         cursor: not-allowed;
     }
 
-    /* Loading state */
     .dataTables_wrapper .dataTables_processing {
         background: #ffffff80;
         backdrop-filter: blur(8px);
@@ -279,12 +190,11 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    /* Hide DataTables default search label */
     .dataTables_filter label::before {
         content: none !important;
     }
 
     .dataTables_filter input {
-        display: none !important; /* Hide default input, rely on custom #tableSearch */
+        display: none !important;
     }
 </style>
