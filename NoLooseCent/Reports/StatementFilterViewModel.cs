@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace NoLooseCent.Models
+namespace NoLooseCent.Reports
 {
     public class StatementFilterViewModel
     {

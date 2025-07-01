@@ -1,43 +1,370 @@
-﻿@model IEnumerable<NoLooseCent.Models.MonthlyStatementViewModel>
+﻿@model NoLooseCent.Reports.MonthlyStatementViewModel
 @{
-    ViewData["Title"] = "Monthly Financial Statement";
+    ViewData["Title"] = "Financial Statement";
 }
 
-@foreach (var month in Model)
-{
-    <h4 class="mt-4">@month.MonthName (@month.CurrencyCode)</h4>
+<div class="container-fluid px-4 py-4">
+    <!-- Filter Card -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white py-3">
+            <h3 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Monthly Financial Statement</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="FinancialStatement" method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold text-muted">Currency</label>
+                    <select name="group" class="form-select shadow-none">
+                        <option value="">All Currencies</option>
+                        @foreach (var item in ViewBag.CurrencyList)
+                        {
+                            <option value="@item.Value" selected="@(item.Selected)">@item.Text</option>
+                        }
+                    </select>
+                </div>
 
-    <table class="table table-bordered table-sm align-middle">
-        <thead class="text-center" style="background:#7F25FF;color:white">
-            <tr>
-                <th style="width:11%">Date</th>
-                <th>Description</th>
-                <th style="width:14%" class="text-end">Deposits</th>
-                <th style="width:14%" class="text-end">Withdrawals</th>
-                <th style="width:14%" class="text-end">Balance</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="fw-bold">
-                <td colspan="4">Opening Balance</td>
-                <td class="text-end">@month.OpeningBalance.ToString("N2")</td>
-            </tr>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold text-muted">Month</label>
+                    <select name="month" class="form-select shadow-none">
+                        @foreach (var item in ViewBag.MonthList)
+                        {
+                            <option value="@item.Value" selected="@(item.Selected)">@item.Text</option>
+                        }
+                    </select>
+                </div>
 
-            @foreach (var row in month.Entries)
-            {
-                <tr>
-                    <td>@row.Date.ToString("dd/MM/yyyy")</td>
-                    <td>@row.Description</td>
-                    <td class="text-end">@row.Deposit?.ToString("N2")</td>
-                    <td class="text-end">@row.Withdrawal?.ToString("N2")</td>
-                    <td class="text-end">@row.Balance.ToString("N2")</td>
-                </tr>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold text-muted">Year</label>
+                    <input name="year" type="number" class="form-control shadow-none" 
+                           value="@ViewBag.SelectedYear" min="2025" max="2099" />
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-2"></i>Generate
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model is null || !Model.Entries.Any())
+    {
+        <div class="alert alert-info text-center py-4">
+            <i class="bi bi-info-circle-fill me-2"></i>No transactions found for the selected period.
+        </div>
+    }
+    else
+    {
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light-primary rounded-circle p-3 me-3">
+                                <i class="bi bi-calendar-month text-primary fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 text-muted small">Period</p>
+                                <h5 class="mb-0">@Model.MonthName @Model.Year</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light-primary rounded-circle p-3 me-3">
+                                <i class="bi bi-currency-exchange text-primary fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 text-muted small">Currency</p>
+                                <h5 class="mb-0">@Model.CurrencyCode</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light-primary rounded-circle p-3 me-3">
+                                <i class="bi bi-wallet2 text-primary fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 text-muted small">Closing Balance</p>
+                                <h5 class="mb-0">@Model.ClosingBalance.ToString("N2")</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>Transaction Details</h5>
+                <div>
+                    <button id="exportPdfBtn" class="btn btn-sm btn-outline-primary me-2">
+                        <i class="bi bi-file-earmark-pdf me-1"></i> PDF
+                    </button>
+                    <button id="exportExcelBtn" class="btn btn-sm btn-outline-success me-2">
+                        <i class="bi bi-file-earmark-excel me-1"></i> Excel
+                    </button>
+                    <button id="printBtn" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-printer me-1"></i> Print
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table id="transactionsTable" class="table table-borderless table-hover mb-0">
+                        <thead class="border-bottom">
+                            <tr>
+                                <th class="ps-4 py-3 text-muted fw-normal">DATE</th>
+                                <th class="py-3 text-muted fw-normal">DESCRIPTION</th>
+                                <th class="text-end pe-4 py-3 text-muted fw-normal">DEPOSITS</th>
+                                <th class="text-end pe-4 py-3 text-muted fw-normal">WITHDRAWALS</th>
+                                <th class="text-end pe-4 py-3 text-muted fw-normal">BALANCE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-light">
+                                <td class="ps-4 py-3" colspan="4">Opening Balance</td>
+                                <td class="text-end pe-4 py-3 fw-bold">@Model.OpeningBalance.ToString("N2")</td>
+                            </tr>
+
+                            @foreach (var row in Model.Entries)
+                            {
+                                <tr class="border-bottom border-light">
+                                    <td class="ps-4 py-3">@row.Date.ToString("dd MMM yyyy")</td>
+                                    <td class="py-3">@row.Description</td>
+                                    <td class="text-end pe-4 py-3 text-success fw-semibold">
+                                        @(row.Deposit.HasValue ? row.Deposit.Value.ToString("N2") : "-")
+                                    </td>
+                                    <td class="text-end pe-4 py-3 text-danger fw-semibold">
+                                        @(row.Withdrawal.HasValue ? row.Withdrawal.Value.ToString("N2") : "-")
+                                    </td>
+                                    <td class="text-end pe-4 py-3 fw-bold">@row.Balance.ToString("N2")</td>
+                                </tr>
+                            }
+
+                            <tr class="bg-light">
+                                <td class="ps-4 py-3" colspan="4">Closing Balance</td>
+                                <td class="text-end pe-4 py-3 fw-bold">@Model.ClosingBalance.ToString("N2")</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-light py-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">
+                        <i class="bi bi-info-circle me-1"></i> Showing @Model.Entries.Count transactions
+                    </span>
+                    <div class="d-flex">
+                        <select id="pageLengthSelect" class="form-select form-select-sm shadow-none w-auto me-2">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="-1">All</option>
+                        </select>
+                        <div id="paginationInfo" class="text-muted small"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Include required libraries -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap5.min.css">
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .card {
+        border-radius: 0.5rem;
+        border: none;
+    }
+    
+    .card-header {
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+    
+    .table thead th {
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        border-top: none;
+    }
+    
+    .table tbody tr {
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .table tbody tr:last-child {
+        border-bottom: none;
+    }
+    
+    .table tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.03);
+    }
+    
+    .form-select, .form-control {
+        border-radius: 0.375rem;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .form-select:focus, .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+        border-color: #86b7fe;
+    }
+    
+    .bg-light-primary {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        border: 1px solid transparent;
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: #0d6efd;
+        color: white !important;
+        border: 1px solid #0d6efd;
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #e9ecef;
+        border: 1px solid #dee2e6;
+    }
+    
+    .dataTables_wrapper .dataTables_info {
+        padding-top: 0.5rem !important;
+    }
+    
+    .dataTables_wrapper .dataTables_filter input {
+        border-radius: 0.25rem;
+        border: 1px solid #ced4da;
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable
+        var table = $('#transactionsTable').DataTable({
+            dom: '<"top"f>rt<"bottom"lip><"clear">',
+            paging: true,
+            pageLength: 10,
+            lengthChange: false,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true,
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: '<i class="bi bi-file-earmark-excel me-1"></i> Excel',
+                    className: 'btn btn-sm btn-outline-success',
+                    title: 'Financial Statement - @Model.MonthName @Model.Year',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: '<i class="bi bi-file-earmark-pdf me-1"></i> PDF',
+                    className: 'btn btn-sm btn-outline-primary',
+                    title: 'Financial Statement - @Model.MonthName @Model.Year',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    },
+                    customize: function(doc) {
+                        doc.content[1].table.widths = ['15%', '40%', '15%', '15%', '15%'];
+                        doc.defaultStyle.alignment = 'left';
+                        doc.styles.tableHeader.alignment = 'left';
+                        doc.content[1].table.body[0].forEach(function(h) {
+                            h.alignment = 'left';
+                        });
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="bi bi-printer me-1"></i> Print',
+                    className: 'btn btn-sm btn-outline-secondary',
+                    title: 'Financial Statement - @Model.MonthName @Model.Year',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    },
+                    customize: function(win) {
+                        $(win.document.body).find('table').addClass('display').css('font-size', '10px');
+                        $(win.document.body).find('tr:nth-child(odd) td').each(function(index){
+                            $(this).css('background-color','#f9f9f9');
+                        });
+                        $(win.document.body).find('h1').css('text-align','center');
+                    }
+                }
+            ],
+            initComplete: function() {
+                // Add custom buttons
+                new $.fn.dataTable.Buttons(table, {
+                    buttons: ['excel', 'pdf', 'print']
+                });
+                
+                table.buttons().container()
+                    .appendTo('#transactionsTable_wrapper .col-md-6:eq(0)');
             }
+        });
 
-            <tr class="fw-bold">
-                <td colspan="4">Closing Balance</td>
-                <td class="text-end">@month.ClosingBalance.ToString("N2")</td>
-            </tr>
-        </tbody>
-    </table>
-}
+        // Custom export buttons
+        $('#exportExcelBtn').click(function() {
+            table.button('.buttons-excel').trigger();
+        });
+
+        $('#exportPdfBtn').click(function() {
+            table.button('.buttons-pdf').trigger();
+        });
+
+        $('#printBtn').click(function() {
+            table.button('.buttons-print').trigger();
+        });
+
+        // Page length select
+        $('#pageLengthSelect').change(function() {
+            var val = $(this).val();
+            table.page.len(val).draw();
+        });
+
+        // Update pagination info
+        table.on('draw', function() {
+            var info = table.page.info();
+            $('#paginationInfo').html(
+                'Page ' + (info.page + 1) + ' of ' + info.pages
+            );
+        });
+    });
+</script>

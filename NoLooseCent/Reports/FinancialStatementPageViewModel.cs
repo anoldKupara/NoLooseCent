@@ -1,6 +1,4 @@
-﻿using NoLooseCent.Models;
-
-namespace NoLooseCent.Reports
+﻿namespace NoLooseCent.Reports
 {
     public class FinancialStatementPageViewModel
     {

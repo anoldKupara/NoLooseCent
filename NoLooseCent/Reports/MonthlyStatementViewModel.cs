@@ -1,4 +1,6 @@
-﻿namespace NoLooseCent.Models
+﻿using NoLooseCent.Models;
+
+namespace NoLooseCent.Reports
 {
     public class MonthlyStatementViewModel
     {
