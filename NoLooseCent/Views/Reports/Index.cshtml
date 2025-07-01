@@ -3,27 +3,46 @@
     ViewData["Title"] = "Reports";
 }
 
+
 <h2 class="mb-4">Financial Reports</h2>
 
 <!-- Nav tabs -->
 <ul class="nav nav-tabs mb-4" id="reportTabs" role="tablist">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="balance-tab" data-bs-toggle="tab" data-bs-target="#balance" type="button" role="tab">Balance Overview</button>
+        <button class="nav-link active" id="balance-tab" data-bs-toggle="tab"
+                data-bs-target="#balance" type="button" role="tab">
+            Balance Overview
+        </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="monthly-tab" data-bs-toggle="tab" data-bs-target="#monthly" type="button" role="tab">Monthly Trends</button>
+        <button class="nav-link" id="monthly-tab" data-bs-toggle="tab"
+                data-bs-target="#monthly" type="button" role="tab">
+            Monthly Trends
+        </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="category-tab" data-bs-toggle="tab" data-bs-target="#category" type="button" role="tab">Category Breakdown</button>
+        <button class="nav-link" id="category-tab" data-bs-toggle="tab"
+                data-bs-target="#category" type="button" role="tab">
+            Category Breakdown
+        </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="netbalance-tab" data-bs-toggle="tab" data-bs-target="#netbalance" type="button" role="tab">Net Balance Trend</button>
+        <button class="nav-link" id="netbalance-tab" data-bs-toggle="tab"
+                data-bs-target="#netbalance" type="button" role="tab">
+            Net Balance Trend
+        </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="topexpenses-tab" data-bs-toggle="tab" data-bs-target="#topexpenses" type="button" role="tab">Top 5 Expenses</button>
+        <button class="nav-link" id="topexpenses-tab" data-bs-toggle="tab"
+                data-bs-target="#topexpenses" type="button" role="tab">
+            Top 5 Expenses
+        </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="recurring-tab" data-bs-toggle="tab" data-bs-target="#recurring" type="button" role="tab">Recurring vs One-time</button>
+        <button class="nav-link" id="recurring-tab" data-bs-toggle="tab"
+                data-bs-target="#recurring" type="button" role="tab">
+            Recurring vs One-time
+        </button>
     </li>
 </ul>
 
@@ -70,12 +89,11 @@
     </div>
 </div>
 
-<!-- Chart.js Script -->
+<!-- Chart.js for the Balance Overview doughnut -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     window.onload = function () {
         const balanceCtx = document.getElementById('balanceChart').getContext('2d');
-
         const usdBalance = parseFloat("@Model.UsdBalance");
         const zwlBalance = parseFloat("@Model.ZwlBalance");
 
@@ -92,13 +110,8 @@
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    title: {
-                        display: true,
-                        text: 'USD vs ZWL Balance'
-                    }
+                    legend: { position: 'bottom' },
+                    title:  { display: true, text: 'USD vs ZWL Balance' }
                 }
             }
         });

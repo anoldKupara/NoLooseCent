@@ -115,6 +115,9 @@
             <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")" asp-controller="Reports" asp-action="Index">
                 <i class="fas fa-chart-pie"></i><span>Reports</span>
             </a>
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")" asp-controller="Reports" asp-action="FinancialStatement" data-tooltip="Financial Statement">
+                <i class="fas fa-file-invoice-dollar"></i><span>Financial Statement</span>
+            </a>
         </nav>
     </div>
 
