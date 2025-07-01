@@ -1,0 +1,43 @@
+﻿@model IEnumerable<NoLooseCent.Models.MonthlyStatementViewModel>
+@{
+    ViewData["Title"] = "Monthly Financial Statement";
+}
+
+@foreach (var month in Model)
+{
+    <h4 class="mt-4">@month.MonthName (@month.CurrencyCode)</h4>
+
+    <table class="table table-bordered table-sm align-middle">
+        <thead class="text-center" style="background:#7F25FF;color:white">
+            <tr>
+                <th style="width:11%">Date</th>
+                <th>Description</th>
+                <th style="width:14%" class="text-end">Deposits</th>
+                <th style="width:14%" class="text-end">Withdrawals</th>
+                <th style="width:14%" class="text-end">Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="fw-bold">
+                <td colspan="4">Opening Balance</td>
+                <td class="text-end">@month.OpeningBalance.ToString("N2")</td>
+            </tr>
+
+            @foreach (var row in month.Entries)
+            {
+                <tr>
+                    <td>@row.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@row.Description</td>
+                    <td class="text-end">@row.Deposit?.ToString("N2")</td>
+                    <td class="text-end">@row.Withdrawal?.ToString("N2")</td>
+                    <td class="text-end">@row.Balance.ToString("N2")</td>
+                </tr>
+            }
+
+            <tr class="fw-bold">
+                <td colspan="4">Closing Balance</td>
+                <td class="text-end">@month.ClosingBalance.ToString("N2")</td>
+            </tr>
+        </tbody>
+    </table>
+}
