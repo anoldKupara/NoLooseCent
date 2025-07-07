@@ -3,15 +3,47 @@
     ViewData["Title"] = "Currency Details";
 }
 
-<h2>Currency Details</h2>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet" />
 
-<dl class="row">
-    <dt class="col-sm-2">Name</dt>
-    <dd class="col-sm-10">@Model.Name</dd>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 px-4 py-12 sm:px-6 lg:px-8 font-inter">
 
-    <dt class="col-sm-2">Code</dt>
-    <dd class="col-sm-10">@Model.Code</dd>
-</dl>
+    <!-- Page Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-5xl font-extrabold text-indigo-700 tracking-tight mb-2">
+            <i class="fas fa-info-circle text-blue-500 mr-2"></i> Currency Details
+        </h1>
+        <p class="text-gray-500 text-lg">View full currency information</p>
+        <hr class="mt-4 border-indigo-300 w-1/2 mx-auto opacity-30" />
+    </div>
 
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-<a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    <!-- Details Card -->
+    <div class="max-w-xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-500 to-sky-400 text-white px-6 py-3 text-lg font-semibold flex items-center">
+            <i class="fas fa-coins mr-2"></i> Currency Overview
+        </div>
+
+        <div class="px-8 py-6 text-gray-800 space-y-4 text-sm sm:text-base">
+            <div class="flex justify-between">
+                <span class="font-semibold text-gray-600">Name:</span>
+                <span class="font-medium">@Model.Name</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="font-semibold text-gray-600">Code:</span>
+                <span class="font-medium">@Model.Code</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="px-8 pb-6 pt-3 flex justify-between">
+            <a asp-action="Index" class="inline-flex items-center px-5 py-2 border border-gray-500 text-gray-700 rounded-md hover:bg-gray-100 transition">
+                <i class="fas fa-arrow-left mr-2"></i> Back to List
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="inline-flex items-center px-5 py-2 bg-yellow-500 text-white font-semibold rounded-md hover:bg-yellow-600 transition">
+                <i class="fas fa-edit mr-2"></i> Edit Currency
+            </a>
+        </div>
+    </div>
+</div>

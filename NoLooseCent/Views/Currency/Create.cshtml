@@ -3,37 +3,56 @@
     ViewData["Title"] = "Add Currency";
 }
 
-<div class="max-w-xl mx-auto bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">💱 Add New Currency</h2>
+<!-- Tailwind + Icons -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet" />
 
-    <form asp-action="Create" class="space-y-4">
-        <div>
-            <label asp-for="Name" class="block text-sm font-medium text-gray-700 mb-1">Currency Name</label>
-            <div class="relative">
-                <input asp-for="Name" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3-1.343 3-3S13.657 2 12 2 9 3.343 9 5s1.343 3 3 3zm0 4c-2.21 0-4 1.79-4 4v2h8v-2c0-2.21-1.79-4-4-4z" />
-                    </svg>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 px-4 py-12 font-inter">
+    <!-- Page Header -->
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-extrabold text-indigo-600 tracking-tight">
+            <i class="fas fa-coins mr-2 text-indigo-500"></i> Add New Currency
+        </h1>
+        <p class="text-gray-500 mt-2">Define your system currency with a name and code</p>
+        <hr class="mt-4 border-indigo-300 w-1/2 mx-auto opacity-30" />
+    </div>
+
+    <!-- Form Card -->
+    <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <form asp-action="Create" class="space-y-5">
+            <!-- Currency Name -->
+            <div>
+                <label asp-for="Name" class="block text-sm font-semibold text-gray-700 mb-1">Currency Name</label>
+                <div class="relative">
+                    <input asp-for="Name" placeholder="e.g. US Dollar" class="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-400 focus:outline-none shadow-sm" />
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center text-indigo-500">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
                 </div>
+                <span asp-validation-for="Name" class="text-sm text-red-500"></span>
             </div>
-            <span asp-validation-for="Name" class="text-sm text-red-500"></span>
-        </div>
 
-        <div>
-            <label asp-for="Code" class="block text-sm font-medium text-gray-700 mb-1">Currency Code</label>
-            <div class="relative">
-                <input asp-for="Code" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                    <span class="font-mono text-xs">ABC</span>
+            <!-- Currency Code -->
+            <div>
+                <label asp-for="Code" class="block text-sm font-semibold text-gray-700 mb-1">Currency Code</label>
+                <div class="relative">
+                    <input asp-for="Code" placeholder="e.g. USD" class="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-400 focus:outline-none shadow-sm" />
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center text-indigo-500">
+                        <i class="fas fa-code"></i>
+                    </div>
                 </div>
+                <span asp-validation-for="Code" class="text-sm text-red-500"></span>
             </div>
-            <span asp-validation-for="Code" class="text-sm text-red-500"></span>
-        </div>
 
-        <div class="flex justify-end gap-3 pt-4">
-            <a asp-action="Index" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md shadow-sm">Cancel</a>
-            <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-sm">Save</button>
-        </div>
-    </form>
+            <!-- Action Buttons -->
+            <div class="flex justify-end gap-3 pt-4">
+                <a asp-action="Index" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg shadow-sm">
+                    <i class="fas fa-arrow-left mr-2"></i> Cancel
+                </a>
+                <button type="submit" class="inline-flex items-center px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md">
+                    <i class="fas fa-save mr-2"></i> Save
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
