@@ -4,49 +4,74 @@
     var currencies = ViewBag.Currencies as List<NoLooseCent.Models.Currency>;
 }
 
-<div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">✏️ Edit Income</h2>
+<div class="container-fluid stay-interview-details">
+    <div class="header-section text-center mb-5">
+        <h1 class="display-5 fw-bold text-success">Edit Income Record</h1>
+        <p class="lead text-muted">Update income details below</p>
+        <hr class="border-success border-2 opacity-50 w-50 mx-auto">
+    </div>
 
-    <form asp-action="Edit" class="space-y-4">
-        <input type="hidden" asp-for="Id" />
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg rounded-4">
+                <div class="custom-gradient-header py-3 px-4 text-white rounded-top">
+                    <h2 class="h5 mb-0"><i class="fas fa-pen me-2"></i>Edit Income</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <input type="hidden" asp-for="Id" />
 
-        <div>
-            <label asp-for="Amount" class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-            <div class="relative">
-                <input asp-for="Amount" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                    <span>$</span>
+                        <div class="mb-3">
+                            <label asp-for="Amount" class="form-label text-muted">Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">$</span>
+                                <input asp-for="Amount" class="form-control rounded-pill" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Source" class="form-label text-muted">Source</label>
+                            <input asp-for="Source" class="form-control rounded-pill" placeholder="E.g. Salary, Gift, Business..." />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DateReceived" class="form-label text-muted">Date Received</label>
+                            <input asp-for="DateReceived" type="date" class="form-control rounded-pill" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CurrencyId" class="form-label text-muted">Currency</label>
+                            <select asp-for="CurrencyId" asp-items="@(new SelectList(currencies, "Id", "Name", Model.CurrencyId))" class="form-select rounded-pill">
+                                <option value="">-- Select Currency --</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 pt-3">
+                            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                                <i class="fas fa-arrow-left me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success rounded-pill px-4">
+                                <i class="fas fa-check-circle me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-
-        <div>
-            <label asp-for="Source" class="block text-sm font-medium text-gray-700 mb-1">Source</label>
-            <div class="relative">
-                <input asp-for="Source" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <div>
-            <label asp-for="DateReceived" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-            <input asp-for="DateReceived" type="date" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
-        </div>
-
-        <div>
-            <label asp-for="CurrencyId" class="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-            <select asp-for="CurrencyId" asp-items="@(new SelectList(currencies, "Id", "Name", Model.CurrencyId))" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                <option value="">-- Select Currency --</option>
-            </select>
-        </div>
-
-        <div class="flex justify-end gap-3 pt-4">
-            <a asp-action="Index" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md shadow-sm">Cancel</a>
-            <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-sm">Update</button>
-        </div>
-    </form>
+    </div>
 </div>
+
+@section Styles {
+    <style>
+        .custom-gradient-header {
+            background: linear-gradient(to right, #16a34a, #4ade80);
+            font-weight: 600;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
+}

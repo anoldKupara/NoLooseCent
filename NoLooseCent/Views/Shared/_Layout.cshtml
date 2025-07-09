@@ -5,16 +5,21 @@
     <meta charset="utf-8" />
     <title>@ViewData["Title"] - NoLooseCent</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Framework & icon fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+    @RenderSection("Styles", required: false)   <!-- ★ New line: allows per-view <style> sections -->
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f5f5f9;
         }
 
+        /* ───────────────────────── Sidebar ───────────────────────── */
         .sidebar {
             min-height: 100vh;
             width: 250px;
@@ -59,6 +64,7 @@
                 justify-content: center;
             }
 
+        /* ───────────────────────── Content area ───────────────────────── */
         .content {
             margin-left: 250px;
             padding: 20px;
@@ -69,6 +75,7 @@
                 margin-left: 80px;
             }
 
+        /* ───────────────────────── Top navbar ───────────────────────── */
         .navbar {
             position: fixed;
             width: 100%;
@@ -96,32 +103,40 @@
         }
     </style>
 </head>
+
 <body>
-    <!-- Sidebar -->
+    <!-- ░░ Sidebar ░░ -->
     <div id="sidebar" class="sidebar">
         <nav class="nav flex-column">
-            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index">
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")"
+               asp-controller="Home" asp-action="Index">
                 <i class="fas fa-home"></i><span>Dashboard</span>
             </a>
-            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Income" ? "active" : "")" asp-controller="Income" asp-action="Index">
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Income" ? "active" : "")"
+               asp-controller="Income" asp-action="Index">
                 <i class="fas fa-coins"></i><span>Income</span>
             </a>
-            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Expense" ? "active" : "")" asp-controller="Expense" asp-action="Index">
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Expense" ? "active" : "")"
+               asp-controller="Expense" asp-action="Index">
                 <i class="fas fa-money-bill-wave"></i><span>Expenses</span>
             </a>
-            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Currency" ? "active" : "")" asp-controller="Currency" asp-action="Index">
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Currency" ? "active" : "")"
+               asp-controller="Currency" asp-action="Index">
                 <i class="fas fa-dollar-sign"></i><span>Currency</span>
             </a>
-            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")" asp-controller="Reports" asp-action="Index">
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")"
+               asp-controller="Reports" asp-action="Index">
                 <i class="fas fa-chart-pie"></i><span>Reports</span>
             </a>
-            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")" asp-controller="Reports" asp-action="FinancialStatement" data-tooltip="Financial Statement">
+            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")"
+               asp-controller="Reports" asp-action="FinancialStatement"
+               data-tooltip="Financial Statement">
                 <i class="fas fa-file-invoice-dollar"></i><span>Financial Statement</span>
             </a>
         </nav>
     </div>
 
-    <!-- Header -->
+    <!-- ░░ Top Navbar ░░ -->
     <nav class="navbar px-4 py-2 d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
             <button onclick="toggleSidebar()" class="btn sidebar-toggle me-3">
@@ -129,8 +144,10 @@
             </button>
             <span class="navbar-brand fw-bold">NoLooseCent</span>
         </div>
+
         <div class="dropdown">
-            <a href="#" class="d-flex align-items-center text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
+            <a href="#" class="d-flex align-items-center text-decoration-none"
+               data-bs-toggle="dropdown" aria-expanded="false">
                 <img src="~/images/default-avatar.png" class="rounded-circle" width="36" height="36" alt="Avatar" />
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow mt-2">
@@ -152,17 +169,18 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- ░░ Main content ░░ -->
     <div id="mainContent" class="content pt-5 mt-4">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
+    <!-- ░░ Scripts ░░ -->
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const content = document.getElementById('mainContent');
+            const content  = document.getElementById('mainContent');
             sidebar.classList.toggle('collapsed');
             content.classList.toggle('collapsed');
         }

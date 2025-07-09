@@ -1,200 +1,194 @@
 ﻿@model IEnumerable<NoLooseCent.Models.Income>
+
 @{
-    ViewData["Title"] = "Income List";
-    var totalIncomeUSD = Model.Where(i => i.Currency != null && !i.Currency.Code.Contains("ZWL")).Sum(i => i.Amount);
-    var totalIncomeZWL = Model.Where(i => i.Currency != null && i.Currency.Code.Contains("ZWL")).Sum(i => i.Amount);
+    ViewData["Title"] = "Income Records";
+
+    var totalIncomeUSD = Model.Where(i => i.Currency != null && !i.Currency.Code.Contains("ZWL"))
+                              .Sum(i => i.Amount);
+    var totalIncomeZWL = Model.Where(i => i.Currency != null && i.Currency.Code.Contains("ZWL"))
+                              .Sum(i => i.Amount);
 }
 
-<!-- Google Fonts -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-
-<!-- Tailwind CSS -->
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-
-<!-- DataTables -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" />
-
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gradient-to-br from-gray-50 to-indigo-50 min-h-screen font-inter transition-colors duration-300">
-    <div class="flex items-center justify-between mb-10">
-        <h2 class="text-4xl font-extrabold text-gray-900 flex items-center tracking-tight">
-            <i class="fas fa-wallet text-indigo-500 mr-3"></i> Income Dashboard
-        </h2>
-        <a asp-action="Create"
-           class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-sm font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
-            <i class="fas fa-plus mr-2"></i> Add Income
+<div class="container-fluid stay-interview-details">
+    <!-- ░░ Header ░░ -->
+    <div class="header-section text-center mb-5">
+        <h1 class="display-4 text-primary fw-bold">Income Records</h1>
+        <p class="lead text-muted">Monitoring all your sources of income across currencies</p>
+        <hr class="border-primary border-2 opacity-50 w-50 mx-auto">
+        <a asp-action="Create" class="btn btn-success btn-lg mt-3 shadow-sm">
+            <i class="fas fa-plus me-2"></i> Add Income
         </a>
     </div>
 
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-        <div class="bg-white bg-opacity-90 backdrop-blur-md rounded-2xl shadow-lg p-6 text-center transform hover:scale-105 transition-all duration-300">
-            <h3 class="text-lg font-semibold text-gray-800">Total Income USD</h3>
-            <p class="text-2xl font-bold text-indigo-600 mt-2">@totalIncomeUSD.ToString("C")</p>
+    <!-- ░░ Summary cards ░░ -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3 mb-md-0">
+            <div class="card shadow-sm text-center rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">Total Income (USD)</h5>
+                    <p class="display-6 text-success fw-bold">@totalIncomeUSD.ToString("C")</p>
+                </div>
+            </div>
         </div>
-        <div class="bg-white bg-opacity-90 backdrop-blur-md rounded-2xl shadow-lg p-6 text-center transform hover:scale-105 transition-all duration-300">
-            <h3 class="text-lg font-semibold text-gray-800">Total Income ZWL</h3>
-            <p class="text-2xl font-bold text-indigo-600 mt-2">@totalIncomeZWL.ToString("C")</p>
+        <div class="col-md-6">
+            <div class="card shadow-sm text-center rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">Total Income (ZWL)</h5>
+                    <p class="display-6 text-warning fw-bold">@totalIncomeZWL.ToString("C")</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    @if (!Model.Any())
-    {
-        <div class="text-center py-16 bg-white bg-opacity-80 backdrop-blur-md rounded-2xl shadow-lg border border-gray-100">
-            <p class="text-2xl font-semibold text-gray-800">No income records yet.</p>
-            <p class="mt-3 text-sm text-gray-500">Start tracking by clicking "Add Income" above.</p>
-        </div>
-    }
-    else
-    {
-        <div class="flex flex-wrap gap-4 mb-10">
-            <input type="text" id="tableSearch" placeholder="Search income..."
-                   class="flex-1 min-w-[250px] px-5 py-3 border border-gray-200 rounded-xl shadow-sm bg-white bg-opacity-80 backdrop-blur-md focus:ring-2 focus:ring-indigo-400 focus:border-indigo-500 focus:outline-none transition-all duration-300 text-gray-800 placeholder-gray-400" />
+    <!-- ░░ Table card ░░ -->
+    <div class="card shadow-lg rounded-4 overflow-hidden">
+        <div class="custom-gradient-header text-white py-3 px-4">
+            <h2 class="h5 mb-0"><i class="fas fa-list me-2"></i>Income List</h2>
         </div>
 
-        <div class="overflow-hidden border border-gray-100 rounded-2xl shadow-xl bg-white bg-opacity-90 backdrop-blur-md">
-            <table id="incomeTable" class="stripe hover min-w-full text-sm">
-                <thead class="bg-gradient-to-r from-indigo-50 to-purple-50 text-gray-700 font-semibold uppercase tracking-wider sticky top-0 z-10 shadow-sm">
-                    <tr>
-                        <th class="px-6 py-4 text-left">Amount</th>
-                        <th class="px-6 py-4 text-left">Source</th>
-                        <th class="px-6 py-4 text-left">Date</th>
-                        <th class="px-6 py-4 text-left">Currency</th>
-                        <th class="px-6 py-4 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 text-gray-800">
-                    @foreach (var item in Model)
-                    {
-                        <tr class="hover:bg-indigo-50 transition-all duration-300 transform hover:scale-[1.01] bg-white bg-opacity-95 rounded-lg shadow-sm">
-                            <td class="px-6 py-4 font-medium relative group">
-                                <span class="text-indigo-600 font-semibold">@item.Amount</span>
-                                <div class="absolute z-30 hidden group-hover:block bg-gray-900 bg-opacity-90 backdrop-blur-sm text-white p-4 text-xs rounded-lg shadow-xl mt-2 transform -translate-x-1/2 left-1/2 transition-all duration-200 scale-0 group-hover:scale-100">
-                                    Source: @item.Source <br />
-                                    Date: @item.DateReceived.ToShortDateString()
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">@item.Source</td>
-                            <td class="px-6 py-4">@item.DateReceived.ToShortDateString()</td>
-                            <td class="px-6 py-4">@item.Currency?.Name</td>
-                            <td class="px-6 py-4 space-x-4">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="text-indigo-600 hover:text-indigo-800 font-medium transition-all duration-200 hover:underline">
-                                    <i class="fas fa-edit mr-1"></i> Edit
-                                </a>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="text-blue-600 hover:text-blue-800 font-medium transition-all duration-200 hover:underline">
-                                    <i class="fas fa-info-circle mr-1"></i> Details
-                                </a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="text-red-600 hover:text-red-800 font-medium transition-all duration-200 hover:underline">
-                                    <i class="fas fa-trash mr-1"></i> Delete
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="card-body pt-4">
+            @if (!Model.Any())
+            {
+                <div class="p-5 text-center text-muted">
+                    <h4>No income records found.</h4>
+                    <p>Click “Add Income” to start tracking your earnings.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table id="incomeTable" class="table table-striped table-hover align-middle w-100">
+                        <thead class="table-light shadow-sm">
+                            <tr>
+                                <th>Amount</th>
+                                <th>Source</th>
+                                <th>Date</th>
+                                <th>Currency</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold text-primary">@item.Amount</td>
+                                    <td>@item.Source</td>
+                                    <td>@item.DateReceived.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        <span class="badge bg-secondary px-3 py-2 rounded-pill">@item.Currency?.Name</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-1 rounded-pill">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1 rounded-pill">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger rounded-pill">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
         </div>
-    }
+    </div>
 </div>
 
-<!-- Scripts -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
 
-<!-- DataTable Config -->
-<script>
-    let dataTable;
+    <style>
+        .custom-gradient-header {
+            background: linear-gradient(to right, #34a0a4, #b0e0e6);
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+        }
 
-    $(document).ready(function () {
-        dataTable = $('#incomeTable').DataTable({
-            responsive: true,
-            dom: '<"flex flex-wrap justify-between items-center mb-6"fr>t<"flex justify-between items-center mt-6"ip>',
-            language: {
-                paginate: {
-                    previous: '<i class="fas fa-chevron-left"></i>',
-                    next: '<i class="fas fa-chevron-right"></i>'
-                },
-                processing: '<div class="animate-pulse bg-white bg-opacity-80 backdrop-blur-md rounded-lg p-4 text-gray-600">Loading income...</div>',
-                search: '',
-                searchPlaceholder: 'Search income...'
-            },
-            order: [[2, "desc"]],
-            drawCallback: function () {
-                $('tr').hover(function () {
-                    $(this).addClass('hover:bg-indigo-50 transform scale-[1.01] transition-all duration-300');
-                }, function () {
-                    $(this).removeClass('hover:bg-indigo-50 transform scale-[1.01] transition-all duration-300');
-                });
+        table.dataTable input[type="search"] {
+            border-radius: 1rem !important;
+            padding: 0.5rem 1rem !important;
+            border: 1px solid #ced4da;
+            width: 220px;
+            background-color: #fff;
+            transition: all 0.2s ease-in-out;
+        }
+
+        table.dataTable thead th {
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .dataTables_wrapper .dataTables_filter {
+            padding-right: 1rem;
+        }
+
+        .dataTables_wrapper .dataTables_paginate {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button {
+                border: none !important;
+                background: #f3f4f6 !important;
+                color: #4b5563 !important;
+                padding: 0.65rem 1.1rem !important;
+                border-radius: 0.75rem !important;
+                font-weight: 500;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                transition: all .18s ease-in-out;
+                min-width: 44px;
             }
+
+        .dataTables_wrapper .paginate_button:hover:not(.current):not(.disabled) {
+            background: #e5e7eb !important;
+            color: #374151 !important;
+        }
+
+        .dataTables_wrapper .paginate_button.current {
+            background: #10b981 !important; /* teal */
+            color: #ffffff !important;
+            box-shadow: 0 4px 10px rgba(16,185,129,.35);
+            cursor: default !important;
+        }
+
+        .dataTables_wrapper .paginate_button.disabled {
+            opacity: 0.45 !important;
+            cursor: not-allowed !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(function () {
+            $('#incomeTable').DataTable({
+                pageLength: 10,
+                lengthChange: false,
+                ordering: true,
+                order: [[2, 'desc']],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search income...",
+                    paginate: {
+                        previous: '«',
+                        next: '»'
+                    }
+                }
+            });
         });
-
-        $('#tableSearch').on('keyup', function () {
-            dataTable.search(this.value).draw();
-        });
-    });
-</script>
-
-<!-- Custom Styling -->
-<style>
-    body {
-        font-family: 'Inter', sans-serif;
-    }
-
-    #incomeTable {
-        border-collapse: separate;
-        border-spacing: 0 0.5rem;
-    }
-
-    #incomeTable th, #incomeTable td {
-        border-bottom: none;
-    }
-
-    #incomeTable tr {
-        transition: all 0.3s ease;
-        border-radius: 0.5rem;
-    }
-
-    .dataTables_paginate .paginate_button {
-        padding: 0.5rem 1rem;
-        margin: 0 0.25rem;
-        border-radius: 0.5rem;
-        background: linear-gradient(135deg, #e5e7eb, #d1d5db);
-        color: #374151;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    .dataTables_paginate .paginate_button.current,
-    .dataTables_paginate .paginate_button:hover {
-        background: linear-gradient(135deg, #6366f1, #4f46e5);
-        color: white;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .dataTables_paginate .paginate_button.disabled {
-        background: #e5e7eb;
-        color: #9ca3af;
-        cursor: not-allowed;
-    }
-
-    .dataTables_wrapper .dataTables_processing {
-        background: #ffffff80;
-        backdrop-filter: blur(8px);
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        font-size: 1rem;
-        color: #4b5563;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .dataTables_filter label::before {
-        content: none !important;
-    }
-
-    .dataTables_filter input {
-        display: none !important;
-    }
-</style>
+    </script>
+}

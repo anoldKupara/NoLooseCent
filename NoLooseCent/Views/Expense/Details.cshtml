@@ -3,21 +3,63 @@
     ViewData["Title"] = "Expense Details";
 }
 
-<h2>Expense Details</h2>
+<div class="container-fluid stay-interview-details">
+    <!-- Header -->
+    <div class="header-section text-center mb-5">
+        <h1 class="display-5 fw-bold text-success">Expense Details</h1>
+        <p class="lead text-muted">View breakdown of this expense record</p>
+        <hr class="border-success border-2 opacity-50 w-50 mx-auto">
+    </div>
 
-<dl class="row">
-    <dt class="col-sm-2">Amount</dt>
-    <dd class="col-sm-10">@Model.Amount</dd>
+    <!-- Card -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg rounded-4">
+                <div class="custom-gradient-header py-3 px-4 text-white rounded-top">
+                    <h2 class="h5 mb-0"><i class="fas fa-info-circle me-2"></i>Details</h2>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-4">
+                        <dt class="col-sm-4 text-muted">Amount</dt>
+                        <dd class="col-sm-8 text-primary fw-semibold">US$@Model.Amount</dd>
 
-    <dt class="col-sm-2">Purpose</dt>
-    <dd class="col-sm-10">@Model.Purpose</dd>
+                        <dt class="col-sm-4 text-muted">Purpose</dt>
+                        <dd class="col-sm-8">@Model.Purpose</dd>
 
-    <dt class="col-sm-2">Date</dt>
-    <dd class="col-sm-10">@Model.DateSpent.ToShortDateString()</dd>
+                        <dt class="col-sm-4 text-muted">Date Spent</dt>
+                        <dd class="col-sm-8">@Model.DateSpent.ToString("dd MMM yyyy")</dd>
 
-    <dt class="col-sm-2">Currency</dt>
-    <dd class="col-sm-10">@Model.Currency?.Name</dd>
-</dl>
+                        <dt class="col-sm-4 text-muted">Currency</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge rounded-pill bg-secondary">@Model.Currency?.Name</span>
+                        </dd>
+                    </dl>
 
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-<a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="fas fa-arrow-left me-1"></i> Back to List
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-success rounded-pill px-4">
+                            <i class="fas fa-pen me-1"></i> Edit
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .custom-gradient-header {
+            background: linear-gradient(to right, #16a34a, #4ade80);
+            font-weight: 600;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+        }
+
+        .badge {
+            font-size: 0.9rem;
+        }
+    </style>
+}
